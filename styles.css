@@ -1,0 +1,60 @@
+/* Basic Styling for the Game */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #1a1a1a;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Game Container */
+#game-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    background-color: #87CEEB;
+    border-radius: 10px;
+}
+
+/* Surprise Box */
+#surprise-box {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    background-image: url('mario-box.png'); /* Replace with your sprite */
+    background-size: cover;
+    cursor: pointer;
+}
+
+/* Coins */
+#coins {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background-image: url('coin.png'); /* Replace with your sprite */
+    background-size: cover;
+    display: none;
+}
+
+/* Buttons */
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #FFD700;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #FFC107;
+}
