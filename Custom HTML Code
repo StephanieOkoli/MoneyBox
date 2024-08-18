@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play-to-Earn Game</title>
+    <style>
+        /* Basic Styling for the Game */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Game Container */
+        #game-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            background-color: #87CEEB;
+            border-radius: 10px;
+        }
+
+        /* Surprise Box */
+        #surprise-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background-image: url('mario-box.png'); /* Replace with your sprite */
+            background-size: cover;
+            cursor: pointer;
+        }
+
+        /* Coins */
+        #coins {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-image: url('coin.png'); /* Replace with your sprite */
+            background-size: cover;
+            display: none;
+        }
+
+        /* Buttons */
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #FFD700;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #FFC107;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="surprise-box"></div>
+        <div id="coins"></div>
+    </div>
+    <button id="connect-wallet">Connect Wallet</button>
+    <button id="claim-tokens">Claim Tokens</button>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5/dist/ethers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@thirdweb-dev/sdk@2"></script>
+    <script>
+        const { ThirdwebSDK } = window.thirdweb;
+        const { ethers } = window;
+
+        const sdk = new ThirdwebSDK("ethereum");
+
+        const tokenAddress = "0x5C09BD312Cd6D9b4A1bf6c39D1219EdeDd435E4A";
+
+        const surpriseBox = document.getElementById('surprise-box');
+        const coins = document.getElementById('coins');
+        const connectWalletButton = document.getElementById('connect-wallet');
+        const claimTokensButton = document.getElementById('claim-tokens');
+
+        let connectedWallet = null;
+        let tokenContract = null;
+
+        connectWalletButton.addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    if (window.ethereum.selectedAddress) {
+                        connectedWallet = window.ethereum.selectedAddress;
+                        tokenContract = await sdk.getContract(tokenAddress, "token");
+                        alert("Wallet already connected: " + connectedWallet);
+                        return;
+                    }
+                    const [address] = await ethereum.request({ method: 'eth_requestAccounts' });
+                    connectedWallet = address;
+                    tokenContract = await sdk.getContract(tokenAddress, "token");
+                    alert("Wallet connected: " + connectedWallet);
+                } catch (error) {
+                    console.error("Error connecting wallet:", error);
+                    alert("Failed to connect wallet. Please make sure you have Coinbase Wallet installed and try again.");
+                }
+            } else {
+                alert("Please install a web3 wallet like MetaMask or Coinbase Wallet to continue.");
+            }
+        });
+
+        surpriseBox.addEventListener('click', () => {
+            coins.style.display = 'block';
+            setTimeout(() => {
+                coins.style.display = 'none';
+            }, 1000);
+        });
+
+        claimTokensButton.addEventListener('click', async () => {
+            if (!connectedWallet || !tokenContract) {
+                alert("Please connect your wallet first.");
+                return;
+            }
+            try {
+                await tokenContract.erc20.mintTo(connectedWallet, ethers.utils.parseUnits("1", 18));
+                alert("Tokens claimed and deposited into your Coinbase wallet!");
+            } catch (error) {
+                console.error("Error claiming tokens:", error);
+            }
+        });
+    </script>
+</body>
+</html>
